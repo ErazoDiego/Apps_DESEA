@@ -1,29 +1,65 @@
 import { Card } from '../types';
 
-export const cards: Card[] = [
-  { id: 'v1', category: 'verdad', nivel: 'suave', dirigida_a: 'mixta', texto: '¿Cuál fue tu primer crush?', tiene_tiempo: false, version_app: '1.0.0' },
-  { id: 'v2', category: 'verdad', nivel: 'suave', dirigida_a: 'mixta', texto: '¿Qué cosa rara te gusta hacer solo/a?', tiene_tiempo: false, version_app: '1.0.0' },
-  { id: 'v3', category: 'verdad', nivel: 'suave', dirigida_a: 'mixta', texto: '¿Cuál es tu recuerdo favorito de nosotros?', tiene_tiempo: false, version_app: '1.0.0' },
-  { id: 'v4', category: 'verdad', nivel: 'suave', dirigida_a: 'mixta', texto: '¿De qué tenías miedo de niño/a?', tiene_tiempo: false, version_app: '1.0.0' },
-  { id: 'v5', category: 'verdad', nivel: 'suave', dirigida_a: 'mixta', texto: '¿Qué canción te da vergüenza admitir que te gusta?', tiene_tiempo: false, version_app: '1.0.0' },
-  { id: 'v6', category: 'verdad', nivel: 'suave', dirigida_a: 'mixta', texto: '¿Cuál es tu comida favorita de la infancia?', tiene_tiempo: false, version_app: '1.0.0' },
-  { id: 'v7', category: 'verdad', nivel: 'suave', dirigida_a: 'mixta', texto: '¿Qué película puedes ver mil veces?', tiene_tiempo: false, version_app: '1.0.0' },
-  { id: 'v8', category: 'verdad', nivel: 'suave', dirigida_a: 'mixta', texto: '¿Alguna vez mentiste para evitar una cita?', tiene_tiempo: false, version_app: '1.0.0' },
-  { id: 'v9', category: 'verdad', nivel: 'suave', dirigida_a: 'mixta', texto: '¿Qué cualidad notaste primero de tu pareja?', tiene_tiempo: false, version_app: '1.0.0' },
-  { id: 'v10', category: 'verdad', nivel: 'suave', dirigida_a: 'mixta', texto: '¿Cuál fue tu peor idea de cita?', tiene_tiempo: false, version_app: '1.0.0' },
-  { id: 'vp1', category: 'verdad', nivel: 'picante', dirigida_a: 'mixta', texto: '¿Con quién fue tu primer beso?', tiene_tiempo: false, version_app: '1.0.0' },
-  { id: 'vp2', category: 'verdad', nivel: 'picante', dirigida_a: 'mixta', texto: '¿Alguna vez fantaseaste con alguien conocido?', tiene_tiempo: false, version_app: '1.0.0' },
-  { id: 'vp3', category: 'verdad', nivel: 'picante', dirigida_a: 'mixta', texto: '¿Qué parte del cuerpo te gusta más del otro?', tiene_tiempo: false, version_app: '1.0.0' },
-  { id: 'vp4', category: 'verdad', nivel: 'picante', dirigida_a: 'mixta', texto: '¿Cuál fue tu experiencia más íntima?', tiene_tiempo: false, version_app: '1.0.0' },
-  { id: 'vp5', category: 'verdad', nivel: 'picante', dirigida_a: 'mixta', texto: '¿Qué lencería te queda mejor?', tiene_tiempo: false, version_app: '1.0.0' },
-  { id: 'r1', category: 'reto', nivel: 'suave', dirigida_a: 'mixta', texto: 'Mandale un mensaje sexy a tu pareja', tiene_tiempo: true, tiempo_segundos: 60, version_app: '1.0.0' },
-  { id: 'r2', category: 'reto', nivel: 'suave', dirigida_a: 'mixta', texto: 'Describí a tu pareja sin usar palabras', tiene_tiempo: true, tiempo_segundos: 60, version_app: '1.0.0' },
-  { id: 'r3', category: 'reto', nivel: 'suave', dirigida_a: 'mixta', texto: 'Hacé la lista de reproducción más sexy', tiene_tiempo: true, tiempo_segundos: 120, version_app: '1.0.0' },
-  { id: 'r4', category: 'reto', nivel: 'suave', dirigida_a: 'mixta', texto: 'Elegí una foto juntos y editála', tiene_tiempo: true, tiempo_segundos: 180, version_app: '1.0.0' },
-  { id: 'r5', category: 'reto', nivel: 'suave', dirigida_a: 'mixta', texto: 'Escribí un poema corto para tu pareja', tiene_tiempo: true, tiempo_segundos: 120, version_app: '1.0.0' },
-  { id: 'rp1', category: 'reto', nivel: 'picante', dirigida_a: 'mixta', texto: 'Mandale una foto sugerente', tiene_tiempo: true, tiempo_segundos: 120, version_app: '1.0.0' },
-  { id: 'rp2', category: 'reto', nivel: 'picante', dirigida_a: 'mixta', texto: 'Bailen juntos sin ropa', tiene_tiempo: true, tiempo_segundos: 180, version_app: '1.0.0' },
-  { id: 'rp3', category: 'reto', nivel: 'picante', dirigida_a: 'mixta', texto: 'Touch challenge sin besar', tiene_tiempo: true, tiempo_segundos: 300, version_app: '1.0.0' },
-  { id: 'rp4', category: 'reto', nivel: 'picante', dirigida_a: 'mixta', texto: 'Escriban un mensaje hot y mándenlo', tiene_tiempo: true, tiempo_segundos: 120, version_app: '1.0.0' },
-  { id: 'rp5', category: 'reto', nivel: 'picante', dirigida_a: 'mixta', texto: 'Selfie comprometedora', tiene_tiempo: true, tiempo_segundos: 60, version_app: '1.0.0' },
-];
+// Importar el JSON (requiere tsconfig.json con "resolveJsonModule": true, que Expo ya tiene)
+const jsonData = require('./cards.json') as {
+  version: string;
+  total_cartas: number;
+  fecha_actualizacion: string;
+  categorias: Record<string, number>;
+  cartas: Array<{
+    id: number;
+    categoria: string;
+    nivel: string;
+    tipo: string;
+    acceso: string;
+    texto: string;
+    cronometro_segundos: number | null;
+    frase_instruccion: string | null;
+    ilustracion: string | null;
+  }>;
+};
+
+// Función de mapeo para transformar el JSON al formato Card
+function mapJsonToCard(jsonItem: typeof jsonData.cartas[0]): Card {
+  // Normalizar nivel: "SUAVE"/"PICANTE"/"INTENSO" -> "suave"/"picante"/"fuego"
+  let nivel: Card['nivel'];
+  if (jsonItem.nivel === 'SUAVE') nivel = 'suave';
+  else if (jsonItem.nivel === 'PICANTE') nivel = 'picante';
+  else if (jsonItem.nivel === 'INTENSO') nivel = 'fuego';
+  else nivel = jsonItem.nivel as Card['nivel'];
+
+  // Normalizar tipo: "MIXTA" -> "mixta", "PARA_EL" -> "el", "PARA_ELLA" -> "ella"
+  let dirigida_a: Card['dirigida_a'];
+  if (jsonItem.tipo === 'MIXTA') dirigida_a = 'mixta';
+  else if (jsonItem.tipo === 'PARA_EL') dirigida_a = 'el';
+  else if (jsonItem.tipo === 'PARA_ELLA') dirigida_a = 'ella';
+  else dirigida_a = jsonItem.tipo as Card['dirigida_a'];
+
+  // Normalizar categoria: "VERDAD" -> "verdad", "RETO_CON_FRASE" -> "reto_con_frase", etc.
+  let category: Card['category'];
+  if (jsonItem.categoria === 'VERDAD') category = 'verdad';
+  else if (jsonItem.categoria === 'RETO') category = 'reto';
+  else if (jsonItem.categoria === 'DESEO') category = 'deseo';
+  else if (jsonItem.categoria === 'RETO_CON_FRASE') category = 'reto_con_frase';
+  else if (jsonItem.categoria === 'SIN_LIMITES') category = 'sin_limites';
+  else if (jsonItem.categoria === 'CIERRE') category = 'cierre';
+  else category = jsonItem.categoria.toLowerCase() as Card['category'];
+
+  return {
+    id: jsonItem.id.toString(),
+    category: category,
+    nivel: nivel,
+    dirigida_a: dirigida_a,
+    texto: jsonItem.texto,
+    tiene_tiempo: jsonItem.cronometro_segundos !== null && jsonItem.cronometro_segundos > 0,
+    tiempo_segundos: (jsonItem.cronometro_segundos !== null && jsonItem.cronometro_segundos > 0) ? jsonItem.cronometro_segundos : undefined,
+    version_app: '1.0.0',
+    acceso: jsonItem.acceso,
+    cronometro_segundos: jsonItem.cronometro_segundos !== null ? jsonItem.cronometro_segundos : undefined,
+    frase_instruccion: jsonItem.frase_instruccion,
+    ilustracion: jsonItem.ilustracion,
+  };
+}
+
+// Exportar las cartas mapeadas desde el array "cartas"
+export const cards: Card[] = jsonData.cartas.map(mapJsonToCard);

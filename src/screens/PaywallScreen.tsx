@@ -1,36 +1,66 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { colors } from '../theme/colors';
+import { useGame } from '../context/GameContext';
 
 export default function PaywallScreen({ navigation }: any) {
+  const { startTrial, isTrialActive } = useGame();
+  const trialIsActive = isTrialActive();
+
+  const handleStartTrial = () => {
+    startTrial();
+    navigation.goBack();
+  };
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}><Text style={styles.close}>✕</Text></TouchableOpacity>
       </View>
+
       <View style={styles.hero}>
         <Text style={styles.logo}>D</Text>
         <Text style={styles.title}>DESEA Pro</Text>
         <Text style={styles.subtitle}>Desbloqueá la noche completa</Text>
       </View>
-      <View style={styles.features}>
-        <Text style={styles.feature}>✓ Cartas ilimitadas</Text>
-        <Text style={styles.feature}>✓ Nivel Fuego incluido</Text>
-        <Text style={styles.feature}>✓ Sin anuncios</Text>
-        <Text style={styles.feature}>✓ Colección guardada ilimitada</Text>
-      </View>
-      <View style={styles.pricing}>
-        <TouchableOpacity style={styles.monthly}>
-          <Text style={styles.planName}>Pro Mensual</Text>
-          <Text style={styles.planPrice}>$2.99/mes</Text>
+
+      {trialIsActive ? (
+        <View style={styles.trialActiveBox}>
+          <Text style={styles.trialActiveText}>¡Prueba activa! Tenés acceso Pro por 24 horas.</Text>
+        </View>
+      ) : (
+        <View style={styles.features}>
+          <Text style={styles.feature}>✓ Cartas ilimitadas</Text>
+          <Text style={styles.feature}>✓ Nivel Fuego incluido</Text>
+          <Text style={styles.feature}>✓ Sin anuncios</Text>
+          <Text style={styles.feature}>✓ Colección guardada ilimitada</Text>
+        </View>
+      )}
+
+      {!trialIsActive && (
+        <View style={styles.pricing}>
+          <TouchableOpacity style={styles.monthly}>
+            <Text style={styles.planName}>Pro Mensual</Text>
+            <Text style={styles.planPrice}>$2.99/mes</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.annual}>
+            <View style={styles.badge}><Text style={styles.badgeText}>AHORRÁ 44%</Text></View>
+            <Text style={styles.planName}>Pro Anual</Text>
+            <Text style={styles.planPrice}>$19.99/año</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {trialIsActive ? (
+        <TouchableOpacity style={styles.trialDoneBtn} onPress={() => navigation.goBack()}>
+          <Text style={styles.trialDoneText}>Volver al juego</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.annual}>
-          <View style={styles.badge}><Text style={styles.badgeText}>AHORRÁ 44%</Text></View>
-          <Text style={styles.planName}>Pro Anual</Text>
-          <Text style={styles.planPrice}>$19.99/año</Text>
+      ) : (
+        <TouchableOpacity style={styles.trialBtn} onPress={handleStartTrial}>
+          <Text style={styles.trialBtnText}>Probar 24 horas gratis</Text>
         </TouchableOpacity>
-      </View>
-      <TouchableOpacity style={styles.trial}><Text style={styles.trialText}>Probar 3 días gratis</Text></TouchableOpacity>
+      )}
+
       <Text style={styles.terms}>Podés cancelar en cualquier momento.</Text>
     </ScrollView>
   );
@@ -54,7 +84,11 @@ const styles = StyleSheet.create({
   badgeText: { fontSize: 12, fontWeight: '600', color: colors.white },
   planName: { fontSize: 18, fontWeight: '600', color: colors.text },
   planPrice: { fontSize: 18, fontWeight: '600', color: colors.accent },
-  trial: { backgroundColor: colors.accent, paddingVertical: 16, borderRadius: 30, alignItems: 'center', marginBottom: 20 },
-  trialText: { fontSize: 16, fontWeight: '600', color: colors.background },
+  trialBtn: { backgroundColor: colors.accent, paddingVertical: 16, borderRadius: 30, alignItems: 'center', marginBottom: 20 },
+  trialBtnText: { fontSize: 16, fontWeight: '600', color: colors.background },
+  trialActiveBox: { backgroundColor: colors.cardSurface, padding: 20, borderRadius: 16, marginBottom: 24, alignItems: 'center' },
+  trialActiveText: { fontSize: 16, color: colors.accent, textAlign: 'center' },
+  trialDoneBtn: { backgroundColor: colors.primary, paddingVertical: 16, borderRadius: 30, alignItems: 'center', marginBottom: 20 },
+  trialDoneText: { fontSize: 16, fontWeight: '600', color: colors.white },
   terms: { fontSize: 12, color: colors.text, opacity: 0.5, textAlign: 'center' },
 });

@@ -5,7 +5,7 @@ import { useGame } from '../context/GameContext';
 import { GameMode, Level } from '../types';
 
 export default function ModeSelectScreen({ navigation }: any) {
-  const { mode, level, setMode, setLevel, dailyCardsUsed, isPro } = useGame();
+  const { mode, level, setMode, setLevel, dailyCardsUsed, isPro, isProOrTrial, startSession } = useGame();
 
   const modes: { value: GameMode; label: string; desc: string }[] = [
     { value: 'mixto', label: 'Mixto', desc: 'Cartas para los dos' },
@@ -20,16 +20,19 @@ export default function ModeSelectScreen({ navigation }: any) {
     { value: 'fuego', label: 'Fuego 🔥', desc: 'Contenido adulto', pro: true },
   ];
 
-  const handleStart = () => {
-    if (dailyCardsUsed >= 10 && !isPro) {
+  const handleStart = (isSession: boolean = false) => {
+    if (isSession) {
+      startSession();
+      navigation.navigate('Game');
+    } else if (dailyCardsUsed >= 10 && !isProOrTrial()) {
       navigation.navigate('DailyLimit');
     } else {
       navigation.navigate('Game');
     }
   };
 
-  return (
-    <View style={styles.container}>
+return (
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Text style={styles.title}>Elegí tu juego</Text>
       
       <Text style={styles.sectionTitle}>Modo</Text>
@@ -56,9 +59,9 @@ export default function ModeSelectScreen({ navigation }: any) {
             style={[
               styles.option,
               level === l.value && styles.optionSelected,
-              l.pro && !isPro && styles.optionProLocked,
+              l.pro && !isProOrTrial() && styles.optionProLocked,
             ]}
-            onPress={() => l.pro && !isPro ? navigation.navigate('Paywall') : setLevel(l.value)}
+            onPress={() => l.pro && !isProOrTrial() ? navigation.navigate('Paywall') : setLevel(l.value)}
           >
             <Text style={[styles.optionLabel, level === l.value && styles.optionLabelSelected]}>
               {l.label}
@@ -70,23 +73,28 @@ export default function ModeSelectScreen({ navigation }: any) {
 
       <View style={styles.remaining}>
         <Text style={styles.remainingText}>
-          {isPro ? 'Ilimitadas' : `${10 - dailyCardsUsed} cartas`} disponibles hoy
+          {isProOrTrial() ? 'Ilimitadas' : `${10 - dailyCardsUsed} cartas`} disponibles hoy
         </Text>
       </View>
 
-      <TouchableOpacity style={styles.startBtn} onPress={handleStart}>
-        <Text style={styles.startBtnText}>Empezar noche</Text>
+      <TouchableOpacity style={styles.startBtn} onPress={() => handleStart(false)}>
+        <Text style={styles.startBtnText}>Empezar noche (Libre)</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={[styles.startBtn, { backgroundColor: '#6A0DAD' }]} onPress={() => handleStart(true)}>
+        <Text style={styles.startBtnText}>Modo Sesión (20 cartas)</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
         <Text style={styles.backBtnText}>Volver</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background, paddingHorizontal: 20, paddingTop: 60 },
+  container: { flex: 1, backgroundColor: colors.background, paddingHorizontal: 20 },
+  content: { paddingTop: 60, paddingBottom: 40 },
   title: { fontSize: 28, fontWeight: '600', color: colors.text, textAlign: 'center', marginBottom: 32 },
   sectionTitle: { fontSize: 16, fontWeight: '600', color: colors.text, marginBottom: 12, marginTop: 16, textAlign: 'center' },
   optionsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 8 },
