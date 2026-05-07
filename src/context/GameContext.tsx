@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { GameMode, Level, UserProgress } from '../types';
+import { GameMode, Level, UserProgress, CustomDeck, CustomCard } from '../types';
 import { cards } from '../data/cards';
 import { getSessionCards, SESSION_PHASE_COLORS } from '../engine/sessionUtils';
 
@@ -31,6 +31,13 @@ interface GameContextType {
   startTrial: () => void;
   isTrialActive: () => boolean;
   isProOrTrial: () => boolean;
+  // Custom Decks
+  customDecks: CustomDeck[];
+  customCards: Record<string, CustomCard>;
+  addCustomDeck: (deck: CustomDeck) => void;
+  removeCustomDeck: (deckId: string) => void;
+  addCustomCard: (card: CustomCard) => void;
+  removeCustomCard: (cardId: string) => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -45,6 +52,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [isOnboardingComplete, setIsOnboardingCompleteState] = useState(false);
   const [dailyCardsUsed, setDailyCardsUsed] = useState(0);
   const [savedCards, setSavedCards] = useState<string[]>([]);
+  const [customDecks, setCustomDecks] = useState<CustomDeck[]>([]);
+  const [customCards, setCustomCards] = useState<Record<string, CustomCard>>({});
   const [lastPlayedDate, setLastPlayedDate] = useState<string>('');
 
   // Modo Sesión
@@ -101,6 +110,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
         setLevelState(progress.currentLevel);
         setIsPro(progress.isPro);
         setSavedCards(progress.savedCards || []);
+        setCustomDecks(progress.customDecks || []);
+        setCustomCards(progress.customCards || {});
         setTrialEndsAt(progress.trialEndsAt || null);
         const today = new Date().toDateString();
         if (progress.lastPlayedDate === today) {
@@ -114,11 +125,12 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   const saveProgress = async () => {
     try {
-      const progress: UserProgress = {
-        currentMode: mode, currentLevel: level, isPro,
-        cardsViewedToday: [], lastPlayedDate: new Date().toDateString(), savedCards,
-        trialEndsAt: trialEndsAt,
-      };
+        const progress: UserProgress = {
+          currentMode: mode, currentLevel: level, isPro,
+          cardsViewedToday: [], lastPlayedDate: new Date().toDateString(), savedCards,
+          trialEndsAt: trialEndsAt,
+          customDecks, customCards,
+        };
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
     } catch (error) { console.error('Error saving:', error); }
   };
@@ -149,6 +161,17 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const removeSavedCard = (id: string) => { setSavedCards(p => p.filter(x => x !== id)); saveProgress(); };
   const isCardSaved = (id: string) => savedCards.includes(id);
 
+  // Custom Decks
+  const addCustomDeck = (deck: CustomDeck) => { setCustomDecks(p => [...p, deck]); saveProgress(); };
+  const removeCustomDeck = (deckId: string) => { setCustomDecks(p => p.filter(d => d.id !== deckId)); saveProgress(); };
+  const addCustomCard = (card: CustomCard) => { setCustomCards(p => ({...p, [card.id]: card })); saveProgress(); };
+  const removeCustomCard = (cardId: string) => {
+    const newCards = {...customCards};
+    delete newCards[cardId];
+    setCustomCards(newCards);
+    saveProgress();
+  };
+
   return (
     <GameContext.Provider value={{
       mode, level, isPro, isOnboardingComplete, dailyCardsUsed, savedCards, trialEndsAt,
@@ -157,6 +180,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       useCard, saveCard, removeSavedCard, isCardSaved,
       startSession, nextSessionCard, getCurrentPhase, getPhaseColor,
       startTrial, isTrialActive, isProOrTrial,
+      customDecks, customCards, addCustomDeck, removeCustomDeck, addCustomCard, removeCustomCard,
     }}>
       {children}
     </GameContext.Provider>

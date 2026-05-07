@@ -32,12 +32,12 @@ export default function GameScreen({ navigation }: any) {
   useEffect(() => {
     if (isSessionMode && sessionCards.length > 0) {
       setCards(sessionCards);
-      setCurrentCard(sessionCards[0]);
+      setCurrentCard(sessionCards[sessionCardIndex] || sessionCards[0]);
     } else {
       setCards(shuffle(filtered));
       if (filtered.length > 0) setCurrentCard(filtered[0]);
     }
-  }, [isSessionMode, sessionCards]);
+  }, [isSessionMode, sessionCards, sessionCardIndex]);
 
   useEffect(() => {
     if (currentCard?.tiene_tiempo && currentCard.tiempo_segundos) {
@@ -150,10 +150,10 @@ export default function GameScreen({ navigation }: any) {
           <Text style={styles.actionIcon}>{isCardSaved(currentCard?.id) ? '♥' : '♡'}</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={dailyCardsUsed >= 10 && !isPro ? styles.mainBtnDisabled : styles.mainBtn}
+          style={dailyCardsUsed >= 10 && !isProOrTrial() ? styles.mainBtnDisabled : styles.mainBtn}
           onPress={handleNext}
         >
-          <Text style={styles.mainBtnText}>{dailyCardsUsed >= 10 && !isPro ? 'Límite' : 'Siguiente'}</Text>
+          <Text style={styles.mainBtnText}>{dailyCardsUsed >= 10 && !isProOrTrial() ? 'Límite' : 'Siguiente'}</Text>
         </TouchableOpacity>
       </View>
     </View>

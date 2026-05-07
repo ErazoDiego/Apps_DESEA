@@ -32,6 +32,9 @@ export default function HomeScreen({ navigation }: any) {
         <TouchableOpacity style={styles.secondaryButton} onPress={() => navigation.navigate('SavedCards')}>
           <Text style={styles.secondaryButtonText}>Guardadas</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.secondaryButton} onPress={() => navigation.navigate('CustomDeck')}>
+          <Text style={styles.secondaryButtonText}>Mazos</Text>
+        </TouchableOpacity>
         {!isPro && <TouchableOpacity style={styles.secondaryButton} onPress={() => navigation.navigate('Paywall')}>
           <Text style={styles.secondaryButtonText}>Upgrade Pro</Text>
         </TouchableOpacity>}

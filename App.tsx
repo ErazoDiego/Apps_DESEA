@@ -10,6 +10,7 @@ import GameScreen from './src/screens/GameScreen';
 import SavedCardsScreen from './src/screens/SavedCardsScreen';
 import DailyLimitScreen from './src/screens/DailyLimitScreen';
 import PaywallScreen from './src/screens/PaywallScreen';
+import CustomDeckScreen from './src/screens/CustomDeckScreen';
 
 const Stack = createStackNavigator();
 
@@ -26,6 +27,7 @@ export default function App() {
           <Stack.Screen name="SavedCards" component={SavedCardsScreen} />
           <Stack.Screen name="DailyLimit" component={DailyLimitScreen} />
           <Stack.Screen name="Paywall" component={PaywallScreen} />
+          <Stack.Screen name="CustomDeck" component={CustomDeckScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </GameProvider>
